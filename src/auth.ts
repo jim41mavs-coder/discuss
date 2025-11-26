@@ -5,6 +5,7 @@ import { db } from "./db";
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const AUTH_SECRET = process.env.AUTH_SECRET;
 
 export const {
   handlers: { GET, POST },
@@ -28,6 +29,8 @@ export const {
       }),
     }),
   ],
+  // Explicitly pass secret; required in production
+  secret: AUTH_SECRET,
   callbacks: {
     async session({ session, user }) {
       if (session.user) {
@@ -39,6 +42,10 @@ export const {
       // Validate environment variables at runtime
       if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
         console.error("Missing GitHub OAuth environment variables");
+        return false;
+      }
+      if (process.env.NODE_ENV === "production" && !process.env.AUTH_SECRET) {
+        console.error("Missing AUTH_SECRET in production environment");
         return false;
       }
       return true;
