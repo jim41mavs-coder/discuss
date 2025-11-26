@@ -6,7 +6,7 @@ interface CommentListProps {
 }
 
 export default async function CommentList({ postId }: CommentListProps) {
-  let comments = await fetchCommentsByPostId(postId);
+  const comments = await fetchCommentsByPostId(postId);
 
   const topLevelComments = comments.filter(
     (comment) => comment.parentId === null
